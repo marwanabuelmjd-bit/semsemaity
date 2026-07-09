@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مفاجأة سمسم السحرية ❤️</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeef2 0%, #ffd1dc 100%);
+            min-height: 100vh; display: flex; justify-content: center; align-items: center;
+            overflow-x: hidden; text-align: center; position: relative;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px; border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(219, 112, 147, 0.3);
+            border: 2px solid #fff; max-width: 650px; width: 95%;
+            z-index: 10; transition: all 0.5s ease-in-out;
+            margin: 20px 0;
+        }
+        
+        /* شاشات التحكم */
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.6s ease-in-out; }
+
+        h1 { color: #d11a5b; font-size: 2.2rem; margin-bottom: 20px; font-weight: normal; }
+        p { color: #666; font-size: 1.15rem; line-height: 1.6; }
+        
+        /* المدخلات والأزرار */
+        input {
+            width: 100%; padding: 15px 20px; border: 2px solid #ffb6c1;
+            border-radius: 30px; font-size: 1.1rem; text-align: center;
+            outline: none; transition: 0.3s; margin: 20px 0;
+        }
+        input:focus { border-color: #d11a5b; box-shadow: 0 0 10px rgba(209, 26, 91, 0.2); }
+        
+        .btn {
+            background: linear-gradient(45deg, #d11a5b, #ff5e7e);
+            color: white; border: none; padding: 14px 40px; font-size: 1.2rem;
+            border-radius: 30px; cursor: pointer; transition: 0.3s; width: 100%;
+            box-shadow: 0 5px 15px rgba(209, 26, 91, 0.3); display: inline-block; text-decoration: none;
+            margin-top: 20px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(209, 26, 91, 0.5); }
+        .error { color: #e63946; font-size: 1rem; display: none; margin-bottom: 15px; }
+
+        /* العداد */
+        .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 25px 0; }
+        .time-box {
+            background: linear-gradient(135deg, #ff5e7e, #d11a5b);
+            color: white; padding: 15px 5px; border-radius: 15px;
+        }
+        .time-box .num { font-size: 1.8rem; font-weight: normal; display: block; font-family: sans-serif; }
+        .time-box .label { font-size: 0.85rem; opacity: 0.9; }
+
+        /* القلوب الثلاثة */
+        .hearts-container { display: flex; justify-content: space-around; margin: 30px 0; }
+        .heart-btn { font-size: 4rem; cursor: pointer; transition: transform 0.2s; user-select: none; animation: beat 1.5s infinite alternate; }
+        .heart-btn:hover { transform: scale(1.2); }
+        
+        /* ألبوم الصور */
+        .photo-frame { 
+            width: 100%; 
+            height: auto; 
+            max-height: 550px; 
+            overflow: hidden; 
+            border-radius: 20px; 
+            border: 6px solid #fff; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+            margin-bottom: 20px; 
+            background: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .photo-frame img { 
+            width: 100%; 
+            height: auto; 
+            max-height: 540px;
+            display: block; 
+            object-fit: contain; 
+        }
+        .comment-box { background: #fff0f3; padding: 18px; border-radius: 15px; border-right: 5px solid #d11a5b; text-align: justify; margin-bottom: 20px; font-size: 1.2rem; }
+
+        /* أنيميشن الجواب */
+        .envelope-container {
+            position: relative;
+            width: 180px;
+            height: 120px;
+            background: #ff7b93;
+            margin: 50px auto;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.4s ease;
+        }
+        .envelope-container:hover {
+            transform: scale(1.1) rotate(-2deg);
+        }
+        .envelope-container::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 0; height: 0;
+            border-left: 90px solid transparent;
+            border-right: 90px solid transparent;
+            border-top: 70px solid #ff5274;
+            transform-origin: top;
+            transition: transform 0.4s ease;
+            z-index: 25;
+        }
+        .envelope-container:hover::before {
+            transform: rotateX(180deg) translateY(1px);
+            z-index: 5;
+        }
+        .letter-preview {
+            position: absolute;
+            bottom: 10px; left: 15px;
+            width: 150px; height: 90px;
+            background: #fff;
+            border-radius: 5px;
+            z-index: 10;
+            transition: transform 0.4s ease;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+        .envelope-container:hover .letter-preview {
+            transform: translateY(-50px);
+            z-index: 20;
+        }
+        .envelope-container::after {
+            content: "";
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 0;
+            border-left: 90px solid #ff6480;
+            border-right: 90px solid #ff6480;
+            border-top: 60px solid transparent;
+            border-bottom: 60px solid #ff6480;
+            border-radius: 10px;
+            z-index: 15;
+        }
+
+        .final-message { color: #d11a5b; font-size: 1.6rem; line-height: 1.8; text-align: center; }
+
+        /* تنسيق صفحة السؤال المستقلة */
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .option-btn {
+            background: #fff;
+            color: #d11a5b;
+            border: 2px solid #ffb6c1;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            outline: none;
+        }
+        .option-btn:hover {
+            background: #fff0f3;
+            border-color: #d11a5b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(209, 26, 91, 0.1);
+        }
+
+        /* تأثيرات القلوب المتساقطة */
+        .heart-rain { position: absolute; top: -10%; color: #d11a5b; animation: fall linear infinite; z-index: 1; pointer-events: none; }
+        @keyframes fall { 0% { top: -10%; transform: translateX(0) rotate(0deg); opacity: 1; } 100% { top: 110%; transform: translateX(100px) rotate(360deg); opacity: 0; } }
+        @keyframes beat { from { transform: scale(1); } to { transform: scale(1.08); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media(max-width: 480px) { .timer-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+
+    <!-- مشغل الصوت الذكي المدمج -->
+    <audio id="bgMusic" loop>
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card">
+        
+        <!-- 1. شاشة الفتح والبورد -->
+        <div id="sec-login" class="section active">
+            <h1>سمسمايتي كبرت يا جدعاااان 🥳❤️</h1>
+            <p>اكتبي كلمة السر السرية عشان تدخلي عالمك الخاص الخاص بيا وبيكي بس 😉</p>
+            <input type="password" id="passwordField" placeholder="اكتبي كلمة السر هنا...">
+            <div class="error" id="errorMsg">الكلمة غلط يا قمر، ركزي وافتكريها! 😉❤️</div>
+            <button class="btn" onclick="checkPassword()">دوس يا قمر ✨</button>
+        </div>
+
+        <!-- 2. شاشة العداد الزمني -->
+        <div id="sec-timer" class="section">
+            <h1>كل ثانية وأنتِ معايا يا قمري 💖</h1>
+            <p>الوقت اللي عدا على أجمل يوم جمعنا (١٣ يونيو ٢٠٢٣ الساعة ٧:٣١ مساءً):</p>
+            <div class="timer-grid">
+                <div class="time-box"><span class="num" id="days">00</span><span class="label">يوم</span></div>
+                <div class="time-box"><span class="num" id="hours">00</span><span class="label">ساعة</span></div>
+                <div class="time-box"><span class="num" id="minutes">00</span><span class="label">دقيقة</span></div>
+                <div class="time-box"><span class="num" id="seconds">00</span><span class="label">ثانية</span></div>
+            </div>
+            <p style="color: #d11a5b; margin-top: 15px;">العمر كله مع بعض وبجانب بعض يارب 🤲❤️</p>
+            <button class="btn" onclick="navigateTo('sec-hearts')">شوفي اللي بعده يا سكرة ◀️</button>
+        </div>
+
+        <!-- 3. شاشة القلوب الثلاثة -->
+        <div id="sec-hearts" class="section">
+            <h1>معايا ٣ قلوب ليكي مخصوص.. 💝</h1>
+            <p>دوسي على كل قلب وشوفي مخبيلك إيه جواه 😉👇</p>
+            <div class="hearts-container">
+                <div class="heart-btn" onclick="alert('اخويا ف الله يا عم ❤️')">❤️</div>
+                <div class="heart-btn" onclick="alert('كل سنة و انتي طيبة يا امو عز 😂❤️')">💖</div>
+                <div class="heart-btn" onclick="alert('روحي my soul يعني مش التانية  😂😂❤️❤️')">💝</div>
+            </div>
+            <button class="btn" onclick="initPhotos()">جاهزة لألبوم الصور والذكريات? 😍◀️</button>
+        </div>
+
+        <!-- 4. شاشة ألبوم الصور الديناميكية -->
+        <div id="sec-photos" class="section">
+            <h1 id="photoTitle">ذكرياتنا الجميلة</h1>
+            <div class="photo-frame">
+                <img id="galleryImg" src="" alt="ذكرياتنا">
+            </div>
+            <div class="comment-box" id="galleryComment">
+                الكلام والكومنت الجميل بتاع الصورة يظهر هنا..
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                <button class="btn" style="background:#999;" onclick="prevPhoto()">السابق ◀️</button>
+                <span id="photoCounter" style="color:#777; min-width: 50px;">1 / 9</span>
+                <button class="btn" onclick="nextPhoto()">التالي ▶️</button>
+            </div>
+        </div>
+
+        <!-- 5. شاشة الجواب النهائي والرسالة الطويلة -->
+        <div id="sec-final" class="section">
+            <div id="envelopeWrapper">
+                <div class="envelope-container" onclick="openEnvelope()">
+                    <div class="letter-preview">✉️❤️</div>
+                </div>
+                <p style="color: #d11a5b; margin-top: 15px;">المسي الجواب الفخم ده عشان يفتح وتخرجي الرسالة السرية! 😍👇</p>
+            </div>
+            <div id="finalMessageBlock" style="display:none;">
+                <div class="final-message">
+                    كل سنة وانتي طيبة يا سمسمايتي و عقبال سنين العمر كله و انتي معايا يا قمري و بإذن الله تبقا سنة سعيدة عليكي و تحققي كل اللي نفسك فيه يا سكرة و متبطليش فرح فيها من اول يوم لآخر يوم ❤️❤️❤️❤️❤️
+                </div>
+                <!-- زرار ينقل لصفحة السؤال المستقلة -->
+                <button class="btn" onclick="navigateTo('sec-question')">ادخلي على آخر حاجة بقا 😉◀️</button>
+            </div>
+        </div>
+
+        <!-- 6. الشاشة الجديدة المستقلة تماماً للسؤال السري -->
+        <div id="sec-question" class="section">
+            <h1 style="font-weight: normal;">ها.. بتحبيني؟ 👀</h1>
+            <p>مفيش مفر من الإجابة، اختاري اختيارك الحقيقي بكل صراحة 😉👇</p>
+            <div class="options-group">
+                <button class="option-btn" onclick="answerLove()">أه</button>
+                <button class="option-btn" onclick="answerLove()">أه جداً</button>
+                <button class="option-btn" onclick="answerLove()">أه أيضاً</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-rain');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 6000);
+        }
+        let rainInterval = setInterval(createHeart, 300);
+
+        function navigateTo(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function checkPassword() {
+            const pass = document.getElementById('passwordField').value.trim();
+            const audio = document.getElementById('bgMusic');
+            if (audio) { audio.play().catch(e => console.log("Audio started")); }
+
+            if (pass === 'simsim' || pass === 'سمسم' || pass === '123') {
+                navigateTo('sec-timer');
+                startTimer();
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        function startTimer() {
+            const startDate = new Date("June 13, 2023 19:31:00").getTime();
+            setInterval(() => {
+                const now = new Date().getTime();
+                const diff = now - startDate;
+                document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+                document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                document.getElementById("minutes").innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000);
+            }, 1000);
+        }
+
+        let currentPhotoIndex = 1;
+        const photoComments = {
+            1: "نبدا باكتر صورة بحبهااا ❤️",
+            2: "ديفااااااااااا.. ✨",
+            3: "اول مسدج بينا 😍",
+            4: "اول هدية لكي مني كانت ف نفس اليوم مع اول مرة اشوفك فيها ونتكلم و اول مرة اكل من ايدك  💖",
+            5: "احلي و اطعم و الذ عصير قصب دوقته ف حياتي بجد انبسط بيه اوي و احسن و اغلي هدية جاتلي ف حياتي 🌟",
+            6: "كوين سووووو ملكة الشوبينج الاونلاين 😂💕",
+            7: "الخطر الأول ع بلبن و رعب الحقيقي لعبده سالم و سامي اخوه المسوس احسن من عمل الكيك ف الدنيا 🌸",
+            8: "الماء و الممشي و الوجه الحسن💝",
+            9: "طبعا ملناش صور سوا لسا فقولت احط دي تمشي الدني ع ما تفرج 😂👑"
+        };
+
+        function initPhotos() {
+            currentPhotoIndex = 1;
+            updatePhotoScreen();
+            navigateTo('sec-photos');
+        }
+
+        function updatePhotoScreen() {
+            document.getElementById('photoTitle').innerText = `ذكرياتنا الجميلة - صفحة ${currentPhotoIndex}`;
+            document.getElementById('galleryImg').src = `pic${currentPhotoIndex}.jpg`;
+            document.getElementById('galleryComment').innerText = photoComments[currentPhotoIndex];
+            document.getElementById('photoCounter').innerText = `${currentPhotoIndex} / 9`;
+        }
+
+        function nextPhoto() {
+            if (currentPhotoIndex < 9) {
+                currentPhotoIndex++;
+                updatePhotoScreen();
+            } else {
+                navigateTo('sec-final');
+            }
+        }
+
+        function prevPhoto() {
+            if (currentPhotoIndex > 1) {
+                currentPhotoIndex--;
+                updatePhotoScreen();
+            } else {
+                navigateTo('sec-hearts');
+            }
+        }
+
+        function openEnvelope() {
+            document.getElementById('envelopeWrapper').style.display = 'none';
+            document.getElementById('finalMessageBlock').style.display = 'block';
+            clearInterval(rainInterval);
+            setInterval(createHeart, 50); // تسريع مطر القلوب الجميل
+        }
+
+        function answerLove() {
+            alert("كنت عارف انك بتحبيني 😂❤️");
+        }
+    </script>
+</body>
+</html>
